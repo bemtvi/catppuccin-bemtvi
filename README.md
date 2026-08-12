@@ -1,14 +1,14 @@
 <h3 align="center">
     <img src="https://raw.githubusercontent.com/catppuccin/catppuccin/main/assets/logos/exports/1544x1544_circle.png" width="100" alt="Logo"/><br/>
-    Catppuccin for nxvim
+    Catppuccin for bemtvi
 </h3>
 
 <p align="center">
-A native <a href="https://github.com/catppuccin/">Catppuccin</a> port for <b>nxvim</b> — the soothing pastel theme, rewritten against the <code>nx.*</code> plugin API instead of neovim's runtime.
+A native <a href="https://github.com/catppuccin/">Catppuccin</a> port for <b>bemtvi</b> — the soothing pastel theme, rewritten against the <code>btv.*</code> plugin API instead of neovim's runtime.
 </p>
 
 This is a fork of [catppuccin/nvim](https://github.com/catppuccin/nvim) migrated to
-run natively on [nxvim](https://github.com/davidrios/nxvim). The four flavours, the
+run natively on [bemtvi](https://github.com/davidrios/bemtvi). The four flavours, the
 palettes, and the highlight-group definitions are the upstream ones; everything that
 touched neovim's runtime has been replaced or removed. See [What's different from the
 neovim port](#whats-different-from-the-neovim-port) for the boundary.
@@ -22,14 +22,14 @@ neovim port](#whats-different-from-the-neovim-port) for the boundary.
 
 ## Installation
 
-nxvim loads colorschemes from any directory on its `runtimepath`. Clone this repo and
+bemtvi loads colorschemes from any directory on its `runtimepath`. Clone this repo and
 add it to your runtimepath in `init.lua`:
 
 ```lua
-nx.o.runtimepath = nx.o.runtimepath .. ",/path/to/catppuccin-nxvim"
+btv.o.runtimepath = btv.o.runtimepath .. ",/path/to/catppuccin-bemtvi"
 ```
 
-(or `vim.opt.runtimepath:append("/path/to/catppuccin-nxvim")` using the muscle-memory
+(or `vim.opt.runtimepath:append("/path/to/catppuccin-bemtvi")` using the muscle-memory
 alias). There is no plugin manager and no compile/cache step — the colorscheme is
 applied directly when you select it.
 
@@ -121,16 +121,16 @@ vim.cmd.colorscheme("catppuccin-mocha")
 ## Native UI theming
 
 Beyond the standard groups (`Normal`, `Comment`, `Pmenu`, `StatusLine`, `Visual`,
-`Search`, `Diagnostic*`, treesitter `@captures`, …), the port themes nxvim's own UI
+`Search`, `Diagnostic*`, treesitter `@captures`, …), the port themes bemtvi's own UI
 surfaces:
 
 - **which-key** — `WhichKey`, `WhichKeyGroup`, `WhichKeyDesc`, `WhichKeySeparator`
 - **statusline** — `StatusLineMode`, `StatusLineModified`
-- **nxtree** — `NxTreeRootName`, `NxTreeDir`, `NxTreeFolder`, `NxTreeFile`,
-  `NxTreeLink`, `NxTreeIndent`, the `NxTreeIcon*` file-type icons, and the
-  `NxTreeGit*` status decorators
+- **btvtree** — `BtvTreeRootName`, `BtvTreeDir`, `BtvTreeFolder`, `BtvTreeFile`,
+  `BtvTreeLink`, `BtvTreeIndent`, the `BtvTreeIcon*` file-type icons, and the
+  `BtvTreeGit*` status decorators
 
-These live in [`lua/catppuccin/groups/nxvim.lua`](lua/catppuccin/groups/nxvim.lua).
+These live in [`lua/catppuccin/groups/bemtvi.lua`](lua/catppuccin/groups/bemtvi.lua).
 
 ## Customization
 
@@ -160,7 +160,7 @@ require("catppuccin").setup({
 
 ### Overwriting highlight groups
 
-All highlight groups, including the nxvim-native ones, can be overridden.
+All highlight groups, including the bemtvi-native ones, can be overridden.
 `custom_highlights` applies to every flavour:
 
 ```lua
@@ -169,7 +169,7 @@ require("catppuccin").setup({
         return {
             Comment = { fg = colors.flamingo },
             Pmenu = { bg = colors.none },
-            NxTreeFolder = { fg = colors.mauve },
+            BtvTreeFolder = { fg = colors.mauve },
         }
     end,
 })
@@ -197,16 +197,16 @@ neovim-runtime machinery does not, so it was rewritten or removed:
 
 - **No bytecode compiler / cache.** The upstream `lib/compiler.lua` precompiled each
   flavour to a `string.dump` blob under `compile_path` and invalidated it with a config
-  hash. nxvim folds queued highlight effects into its core registry, so the port just
-  defines every group directly via `nx.hl.define` on load
+  hash. bemtvi folds queued highlight effects into its core registry, so the port just
+  defines every group directly via `btv.hl.define` on load
   ([`lib/loader.lua`](lua/catppuccin/lib/loader.lua)). No `compile_path`, no
   `:CatppuccinCompile`, no `io`/`stdpath`/`mkdir`/hashing.
 - **No plugin integrations.** The 69 `groups/integrations/*` files themed neovim plugins
-  (telescope, cmp, gitsigns, …) that don't exist in nxvim; their group names are never
+  (telescope, cmp, gitsigns, …) that don't exist in bemtvi; their group names are never
   read here. They — and `default_integrations`/`auto_integrations`/`detect_integrations`
-  — are removed. nxvim's real UI surfaces are themed via the native groups above instead.
-- **No neovim-only `vim.*`.** nxvim exposes only a bounded `vim.*` muscle-memory
-  whitelist over the `nx.*` API; calls outside it fail loud rather than no-op. The port
+  — are removed. bemtvi's real UI surfaces are themed via the native groups above instead.
+- **No neovim-only `vim.*`.** bemtvi exposes only a bounded `vim.*` muscle-memory
+  whitelist over the `btv.*` API; calls outside it fail loud rather than no-op. The port
   drops the `vim.fn.has`/`vim.o.pumborder` version checks, the
   `vim.treesitter.highlighter.hl_map` deprecation warnings, the kitty palette hack, and
   the statusline helpers (lualine/feline/barbecue/bufferline) and tree-sitter `after/`

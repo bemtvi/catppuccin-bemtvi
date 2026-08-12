@@ -1,6 +1,6 @@
 local M = {}
 
--- Highlight groups for nxvim's own native UI surfaces — the ones with no vim
+-- Highlight groups for bemtvi's own native UI surfaces — the ones with no vim
 -- equivalent that the standard editor/syntax/lsp groups would cover. Colours
 -- follow catppuccin's conventions (mauve keys, blue groups, lavender accents)
 -- so the native picker, which-key popup and statusline match the rest of the

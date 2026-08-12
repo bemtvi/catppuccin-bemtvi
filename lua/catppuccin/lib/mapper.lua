@@ -32,7 +32,7 @@ function M.apply(flavour)
 			vim.tbl_deep_extend("force", theme.syntax, require("catppuccin.groups." .. syntax_modules[i]).get())
 	end
 
-	theme.nxvim = require("catppuccin.groups.nxvim").get() -- nxvim native UI surfaces
+	theme.bemtvi = require("catppuccin.groups.bemtvi").get() -- bemtvi native UI surfaces
 
 	-- Plugin integrations whose highlight groups we keep defined unconditionally
 	-- so custom plugins can link to / reuse their names. Statusline/tabline plugins

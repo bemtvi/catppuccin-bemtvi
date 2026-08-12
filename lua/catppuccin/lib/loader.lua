@@ -1,7 +1,7 @@
 local M = {}
 
--- Native nxvim applier. Replaces catppuccin's neovim bytecode compiler/cache:
--- nxvim queues highlight effects (`nx.hl.define`) and folds them into the core
+-- Native bemtvi applier. Replaces catppuccin's neovim bytecode compiler/cache:
+-- bemtvi queues highlight effects (`btv.hl.define`) and folds them into the core
 -- registry between turns, so there is nothing to precompile — on load we build
 -- the theme in memory and define every group directly.
 function M.load(flavour)
@@ -21,19 +21,19 @@ function M.load(flavour)
 	-- "keep" → leftmost wins: user overrides beat the native UI groups and plugin
 	-- integrations, which beat syntax/treesitter, which beat editor chrome. Same
 	-- precedence the upstream compiler used (custom → integrations → syntax →
-	-- editor); nxvim native groups sit alongside integrations in that slot.
+	-- editor); bemtvi native groups sit alongside integrations in that slot.
 	local groups = vim.tbl_deep_extend(
 		"keep",
 		theme.custom_highlights,
-		theme.nxvim,
+		theme.bemtvi,
 		theme.integrations,
 		theme.syntax,
 		theme.editor
 	)
 
-	local h = nx.hl.define
+	local h = btv.hl.define
 	for group, color in pairs(groups) do
-		-- nx.hl.define reads boolean attrs (bold/italic/…), not a `style` array.
+		-- btv.hl.define reads boolean attrs (bold/italic/…), not a `style` array.
 		if color.style then
 			for _, style in ipairs(color.style) do
 				color[style] = true
@@ -56,7 +56,7 @@ function M.load(flavour)
 	-- so handlers read the fully-active theme. (`:colorscheme <name>` also fires
 	-- ColorScheme from the core after sourcing colors/*.lua; the extra fire here is
 	-- idempotent — a well-behaved handler just re-applies the same result.)
-	nx.autocmd.exec("ColorScheme", { pattern = vim.g.colors_name })
+	btv.autocmd.exec("ColorScheme", { pattern = vim.g.colors_name })
 end
 
 return M
