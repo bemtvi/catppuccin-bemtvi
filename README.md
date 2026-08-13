@@ -8,7 +8,7 @@ A native <a href="https://github.com/catppuccin/">Catppuccin</a> port for <b>bem
 </p>
 
 This is a fork of [catppuccin/nvim](https://github.com/catppuccin/nvim) migrated to
-run natively on [bemtvi](https://github.com/davidrios/bemtvi). The four flavours, the
+run natively on [bemtvi](https://github.com/bemtvi/bemtvi). The four flavours, the
 palettes, and the highlight-group definitions are the upstream ones; everything that
 touched neovim's runtime has been replaced or removed. See [What's different from the
 neovim port](#whats-different-from-the-neovim-port) for the boundary.
