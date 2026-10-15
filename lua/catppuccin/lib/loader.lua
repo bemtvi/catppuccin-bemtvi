@@ -8,13 +8,13 @@ function M.load(flavour)
 	local O = require("catppuccin").options
 	local theme = require("catppuccin.lib.mapper").apply(flavour)
 
-	vim.o.termguicolors = true
-	vim.o.background = flavour == "latte" and "light" or "dark"
-	vim.g.colors_name = "catppuccin-" .. flavour
+	btv.o.termguicolors = true
+	btv.o.background = flavour == "latte" and "light" or "dark"
+	btv.g.colors_name = "catppuccin-" .. flavour
 
 	if O.term_colors then
 		for k, v in pairs(theme.terminal) do
-			vim.g[k] = v
+			btv.g[k] = v
 		end
 	end
 
@@ -22,7 +22,7 @@ function M.load(flavour)
 	-- integrations, which beat syntax/treesitter, which beat editor chrome. Same
 	-- precedence the upstream compiler used (custom → integrations → syntax →
 	-- editor); bemtvi native groups sit alongside integrations in that slot.
-	local groups = vim.tbl_deep_extend(
+	local groups = btv.tbl.deep_extend(
 		"keep",
 		theme.custom_highlights,
 		theme.bemtvi,
@@ -56,7 +56,7 @@ function M.load(flavour)
 	-- so handlers read the fully-active theme. (`:colorscheme <name>` also fires
 	-- ColorScheme from the core after sourcing colors/*.lua; the extra fire here is
 	-- idempotent — a well-behaved handler just re-applies the same result.)
-	btv.autocmd.exec("ColorScheme", { pattern = vim.g.colors_name })
+	btv.autocmd.exec("ColorScheme", { pattern = btv.g.colors_name })
 end
 
 return M

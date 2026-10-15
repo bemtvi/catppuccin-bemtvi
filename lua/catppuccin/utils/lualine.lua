@@ -10,7 +10,7 @@ local function get_colors(colors_override, colors)
 	end
 end
 return function(flavour)
-	flavour = flavour or require("catppuccin").flavour or vim.g.catppuccin_flavour or "mocha"
+	flavour = flavour or require("catppuccin").flavour or btv.g.catppuccin_flavour or "mocha"
 	local C = require("catppuccin.palettes").get_palette(flavour)
 	local O = require("catppuccin").options
 
@@ -54,7 +54,7 @@ return function(flavour)
 	if overrides then
 		local default_override = get_colors(overrides.all, C)
 		local flavor_override = get_colors(overrides[flavour], C)
-		return vim.tbl_deep_extend("force", default_colors, default_override, flavor_override)
+		return btv.tbl.deep_extend("force", default_colors, default_override, flavor_override)
 	end
 	return default_colors
 end

@@ -93,7 +93,7 @@ function M.get_theme(user_config)
 
 		local user_highlights = user_config.custom or {}
 		highlights =
-			vim.tbl_deep_extend("keep", user_highlights[ctp.flavour] or {}, user_highlights.all or {}, highlights)
+			btv.tbl.deep_extend("keep", user_highlights[ctp.flavour] or {}, user_highlights.all or {}, highlights)
 
 		for _, color in pairs(highlights) do
 			-- Because default is gui=bold,italic

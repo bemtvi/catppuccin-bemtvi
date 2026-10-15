@@ -98,10 +98,10 @@ if ok then
 				view = {},
 			}
 		end
-		assets = vim.tbl_deep_extend("force", assets, opts.assets)
-		sett = vim.tbl_deep_extend("force", sett, opts.sett)
-		mode_colors = vim.tbl_deep_extend("force", mode_colors, opts.mode_colors)
-		view = vim.tbl_deep_extend("force", view, opts.view)
+		assets = btv.tbl.deep_extend("force", assets, opts.assets)
+		sett = btv.tbl.deep_extend("force", sett, opts.sett)
+		mode_colors = btv.tbl.deep_extend("force", mode_colors, opts.mode_colors)
+		view = btv.tbl.deep_extend("force", view, opts.view)
 	end
 
 	function M.get_statusline()
@@ -115,7 +115,7 @@ if ok then
 		local function is_enabled(min_width)
 			if shortline then return true end
 
-			return vim.api.nvim_win_get_width(0) > min_width
+			return btv.win.width(0) > min_width
 		end
 
 		-- global components
@@ -129,7 +129,7 @@ if ok then
 
 		-- helpers
 		local function any_git_changes()
-			local gst = vim.b.gitsigns_status_dict -- git stats
+			local gst = btv.b.gitsigns_status_dict -- git stats
 			if gst then
 				if
 					gst["added"] and gst["added"] > 0
@@ -150,7 +150,7 @@ if ok then
 		local vi_mode_hl = function()
 			return {
 				fg = sett.text,
-				bg = mode_colors[vim.fn.mode()][2],
+				bg = mode_colors[btv.mode_str()][2],
 				style = "bold",
 			}
 		end
@@ -160,13 +160,13 @@ if ok then
 			hl = function()
 				return {
 					fg = sett.text,
-					bg = mode_colors[vim.fn.mode()][2],
+					bg = mode_colors[btv.mode_str()][2],
 				}
 			end,
 		}
 
 		components.active[1][2] = {
-			provider = function() return mode_colors[vim.fn.mode()][1] .. " " end,
+			provider = function() return mode_colors[btv.mode_str()][1] .. " " end,
 			hl = vi_mode_hl,
 		}
 
@@ -181,7 +181,7 @@ if ok then
 			provider = assets.right_separator,
 			hl = function()
 				return {
-					fg = mode_colors[vim.fn.mode()][2],
+					fg = mode_colors[btv.mode_str()][2],
 					bg = sett.bkg,
 				}
 			end,
@@ -193,7 +193,7 @@ if ok then
 			provider = assets.right_separator,
 			hl = function()
 				return {
-					fg = mode_colors[vim.fn.mode()][2],
+					fg = mode_colors[btv.mode_str()][2],
 					bg = sett.diffs,
 				}
 			end,
@@ -253,12 +253,12 @@ if ok then
 		-- file progress
 		components.active[1][10] = {
 			provider = function()
-				local current_line = vim.fn.line "."
-				local total_line = vim.fn.line "$"
+				local current_line = btv.line "."
+				local total_line = btv.line "$"
 
 				if current_line == 1 then
 					return "Top"
-				elseif current_line == vim.fn.line "$" then
+				elseif current_line == btv.line "$" then
 					return "Bot"
 				end
 				local result, _ = math.modf((current_line / total_line) * 100)
@@ -290,7 +290,7 @@ if ok then
 		-- macro
 		components.active[1][12] = {
 			provider = "macro",
-			enabled = function() return vim.api.nvim_get_option_value("cmdheight", { scope = "global" }) == 0 end,
+			enabled = function() return btv.go.cmdheight == 0 end,
 			hl = {
 				fg = sett.extras,
 				bg = sett.bkg,
@@ -301,7 +301,7 @@ if ok then
 		-- search count
 		components.active[1][13] = {
 			provider = "search_count",
-			enabled = function() return vim.api.nvim_get_option_value("cmdheight", { scope = "global" }) == 0 end,
+			enabled = function() return btv.go.cmdheight == 0 end,
 			hl = {
 				fg = sett.extras,
 				bg = sett.bkg,
@@ -335,8 +335,7 @@ if ok then
 		-- workspace loader
 		components.active[2][1] = {
 			provider = function()
-				if vim.lsp.status then return "" end
-				local Lsp = vim.lsp.util.get_progress_messages()[1]
+				local Lsp = btv.lsp.progress()[1]
 
 				if Lsp then
 					local msg = Lsp.message or ""
@@ -353,7 +352,7 @@ if ok then
 						"",
 						"",
 					}
-					local ms = vim.loop.hrtime() / 1000000
+					local ms = btv.now_ms()
 					local frame = math.floor(ms / 120) % #spinners
 
 					if percentage >= 70 then
@@ -375,7 +374,7 @@ if ok then
 		-- general diagnostics (errors, warnings. info and hints)
 		components.active[2][2] = {
 			provider = "diagnostic_errors",
-			enabled = function() return lsp.diagnostics_exist(vim.diagnostic.severity.ERROR) end,
+			enabled = function() return lsp.diagnostics_exist(btv.diagnostic.severity.ERROR) end,
 
 			hl = {
 				fg = C.red,
@@ -386,7 +385,7 @@ if ok then
 
 		components.active[2][3] = {
 			provider = "diagnostic_warnings",
-			enabled = function() return lsp.diagnostics_exist(vim.diagnostic.severity.WARN) end,
+			enabled = function() return lsp.diagnostics_exist(btv.diagnostic.severity.WARN) end,
 			hl = {
 				fg = C.yellow,
 				bg = sett.bkg,
@@ -396,7 +395,7 @@ if ok then
 
 		components.active[2][4] = {
 			provider = "diagnostic_info",
-			enabled = function() return lsp.diagnostics_exist(vim.diagnostic.severity.INFO) end,
+			enabled = function() return lsp.diagnostics_exist(btv.diagnostic.severity.INFO) end,
 			hl = {
 				fg = C.sky,
 				bg = sett.bkg,
@@ -406,7 +405,7 @@ if ok then
 
 		components.active[2][5] = {
 			provider = "diagnostic_hints",
-			enabled = function() return lsp.diagnostics_exist(vim.diagnostic.severity.HINT) end,
+			enabled = function() return lsp.diagnostics_exist(btv.diagnostic.severity.HINT) end,
 			hl = {
 				fg = C.rosewater,
 				bg = sett.bkg,
@@ -432,7 +431,7 @@ if ok then
 
 		components.active[3][2] = {
 			provider = function()
-				local active_clients = vim.lsp.get_clients { bufnr = 0 }
+				local active_clients = btv.lsp.clients { bufnr = 0 }
 
 				-- show an indicator that we have running lsps
 				if view.lsp.name == false and next(active_clients) ~= nil then
@@ -468,8 +467,8 @@ if ok then
 
 		components.active[3][3] = {
 			provider = function()
-				local filename = vim.fn.expand "%:t"
-				local extension = vim.fn.expand "%:e"
+				local filename = btv.expand "%:t"
+				local extension = btv.expand "%:e"
 				local present, icons = pcall(require, "nvim-web-devicons")
 				local icon = present and icons.get_icon(filename, extension) or assets.file
 				return (sett.show_modified and "%m" or "") .. " " .. icon .. " " .. filename .. " "
@@ -490,7 +489,7 @@ if ok then
 
 		components.active[3][4] = {
 			provider = function()
-				local dir_name = vim.fn.fnamemodify(vim.fn.getcwd(), ":t")
+				local dir_name = btv.fname.modify(btv.cwd(), ":t")
 				return " " .. assets.dir .. " " .. dir_name .. " "
 			end,
 			enabled = is_enabled(80),
@@ -510,7 +509,7 @@ if ok then
 
 		-- Inanctive components
 		components.inactive[1][1] = {
-			provider = function() return " " .. string.upper(vim.bo.ft) .. " " end,
+			provider = function() return " " .. string.upper(btv.bo.filetype) .. " " end,
 			hl = {
 				fg = C.overlay2,
 				bg = C.mantle,

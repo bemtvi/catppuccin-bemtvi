@@ -40,29 +40,29 @@ function M.get(C, O, U)
 				or C.base,
 		}, -- normal text in non-current windows
 		NormalSB = { fg = C.text, bg = C.crust }, -- normal text in non-current windows
-		NormalFloat = { fg = C.text, bg = (O.float.transparent and vim.o.winblend == 0) and C.none or C.mantle }, -- Normal text in floating windows.
+		NormalFloat = { fg = C.text, bg = (O.float.transparent and btv.o.winblend == 0) and C.none or C.mantle }, -- Normal text in floating windows.
 		FloatBorder = O.float.solid
-				and ((O.float.transparent and vim.o.winblend == 0) and { fg = C.surface2, bg = C.none } or {
+				and ((O.float.transparent and btv.o.winblend == 0) and { fg = C.surface2, bg = C.none } or {
 					fg = C.mantle,
 					bg = C.mantle,
 				})
-			or { fg = C.blue, bg = (O.float.transparent and vim.o.winblend == 0) and C.none or C.mantle },
+			or { fg = C.blue, bg = (O.float.transparent and btv.o.winblend == 0) and C.none or C.mantle },
 		FloatTitle = O.float.solid and {
 			fg = C.crust,
 			bg = C.lavender,
-		} or { fg = C.subtext0, bg = (O.float.transparent and vim.o.winblend == 0) and C.none or C.mantle }, -- Title of floating windows
-		FloatShadow = { bg = (O.float.transparent and vim.o.winblend == 0) and C.none or C.overlay0, blend = 80 },
+		} or { fg = C.subtext0, bg = (O.float.transparent and btv.o.winblend == 0) and C.none or C.mantle }, -- Title of floating windows
+		FloatShadow = { bg = (O.float.transparent and btv.o.winblend == 0) and C.none or C.overlay0, blend = 80 },
 		FloatShadowThrough = {
-			bg = (O.float.transparent and vim.o.winblend == 0) and C.none or C.overlay0,
+			bg = (O.float.transparent and btv.o.winblend == 0) and C.none or C.overlay0,
 			blend = 100,
 		},
 		Pmenu = {
-			bg = (O.transparent_background and vim.o.pumblend == 0) and C.none or C.mantle,
+			bg = (O.transparent_background and btv.o.pumblend == 0) and C.none or C.mantle,
 			fg = C.overlay2,
 		}, -- Popup menu: normal item.
 		PmenuBorder = {
-			bg = (O.transparent_background and vim.o.pumblend == 0) and C.none or C.mantle,
-			fg = pumsolid and ((O.transparent_background and vim.o.pumblend == 0) and C.none or C.mantle) or C.blue,
+			bg = (O.transparent_background and btv.o.pumblend == 0) and C.none or C.mantle,
+			fg = pumsolid and ((O.transparent_background and btv.o.pumblend == 0) and C.none or C.mantle) or C.blue,
 		}, -- Popup menu: border
 		PmenuSel = { bg = C.surface0, style = { "bold" } }, -- Popup menu: selected item.
 		PmenuMatch = { fg = C.text, style = { "bold" } }, -- Popup menu: matching text.

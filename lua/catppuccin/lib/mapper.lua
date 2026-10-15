@@ -24,7 +24,7 @@ function M.apply(flavour)
 		)
 
 	local theme = {}
-	theme.editor = vim.tbl_deep_extend(
+	theme.editor = btv.tbl.deep_extend(
 		"force",
 		require("catppuccin.groups.editor").get(C, O, U),
 		require("catppuccin.groups.lsp").get(C, O, U)
@@ -34,7 +34,7 @@ function M.apply(flavour)
 	local syntax_modules = { "syntax", "semantic_tokens", "treesitter" }
 	for i = 1, #syntax_modules do
 		theme.syntax =
-			vim.tbl_deep_extend("force", theme.syntax, require("catppuccin.groups." .. syntax_modules[i]).get(C, O, U))
+			btv.tbl.deep_extend("force", theme.syntax, require("catppuccin.groups." .. syntax_modules[i]).get(C, O, U))
 	end
 
 	theme.bemtvi = require("catppuccin.groups.bemtvi").get(C, O, U) -- bemtvi native UI surfaces
@@ -47,7 +47,7 @@ function M.apply(flavour)
 	local integration_modules =
 		{ "cmp", "blink_cmp", "coc_nvim", "copilot_vim", "barbar", "buffon", "nvimtree", "telescope" }
 	for i = 1, #integration_modules do
-		theme.integrations = vim.tbl_deep_extend(
+		theme.integrations = btv.tbl.deep_extend(
 			"force",
 			theme.integrations,
 			require("catppuccin.groups.integrations." .. integration_modules[i]).get(C, O, U)
@@ -57,7 +57,7 @@ function M.apply(flavour)
 	theme.terminal = require("catppuccin.groups.terminal").get(C, O, U) -- terminal colors
 	local user_highlights = O.highlight_overrides
 	if type(user_highlights[flavour]) == "function" then user_highlights[flavour] = user_highlights[flavour](C) end
-	theme.custom_highlights = vim.tbl_deep_extend(
+	theme.custom_highlights = btv.tbl.deep_extend(
 		"keep",
 		user_highlights[flavour] or {},
 		type(user_highlights.all) == "function" and user_highlights.all(C) or user_highlights.all or {}

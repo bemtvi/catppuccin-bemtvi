@@ -70,23 +70,23 @@ M.options = M.default_options
 
 local function get_flavour(default)
 	local flavour
-	if default and default == M.flavour and vim.o.background ~= (M.flavour == "latte" and "light" or "dark") then
-		flavour = M.options.background[vim.o.background]
+	if default and default == M.flavour and btv.o.background ~= (M.flavour == "latte" and "light" or "dark") then
+		flavour = M.options.background[btv.o.background]
 	else
 		flavour = default
 	end
 
 	if flavour and not M.flavours[flavour] then
-		vim.notify(
+		btv.notify(
 			string.format(
 				"Catppuccin (error): Invalid flavour '%s', flavour must be 'latte', 'frappe', 'macchiato', 'mocha' or 'auto'",
 				flavour
 			),
-			vim.log.levels.ERROR
+			btv.log.levels.ERROR
 		)
 		flavour = nil
 	end
-	return flavour or M.options.flavour or vim.g.catppuccin_flavour or M.options.background[vim.o.background]
+	return flavour or M.options.flavour or btv.g.catppuccin_flavour or M.options.background[btv.o.background]
 end
 
 local did_setup = false
@@ -104,23 +104,30 @@ end
 function M.setup(user_conf)
 	did_setup = true
 	user_conf = user_conf or {}
-	M.options = vim.tbl_deep_extend("keep", user_conf, M.default_options)
+	M.options = btv.tbl.deep_extend("keep", user_conf, M.default_options)
 	M.options.highlight_overrides.all = user_conf.custom_highlights or M.options.highlight_overrides.all
 end
 
-vim.api.nvim_create_user_command(
-	"Catppuccin",
-	function(inp) vim.cmd("colorscheme catppuccin-" .. get_flavour(inp.args)) end,
-	{
-		nargs = 1,
-		complete = function(line)
-			local matches = {}
-			for name in pairs(M.flavours) do
-				if vim.startswith(name, line) then matches[#matches + 1] = name end
-			end
-			return matches
-		end,
-	}
-)
+btv.command("Catppuccin", function(inp)
+	-- upstream declared `nargs = 1`; btv.command has no arity check, so refuse here.
+	if inp.args == "" then
+		btv.notify("Catppuccin (error): missing flavour argument", btv.log.levels.ERROR)
+		return
+	end
+	btv.cmd("colorscheme catppuccin-" .. get_flavour(inp.args))
+end, {
+	desc = "Switch the Catppuccin flavour",
+	usage = "{flavour}",
+	-- `args` is the list of words typed so far; the last one is the partial word.
+	complete = function(args)
+		local prefix = args[#args] or ""
+		local matches = {}
+		for name in pairs(M.flavours) do
+			if btv.str.startswith(name, prefix) then matches[#matches + 1] = name end
+		end
+		table.sort(matches, function(a, b) return M.flavours[a] < M.flavours[b] end)
+		return matches
+	end,
+})
 
 return M

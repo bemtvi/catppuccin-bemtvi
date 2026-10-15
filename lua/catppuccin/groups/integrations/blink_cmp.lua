@@ -51,7 +51,7 @@ function M.get(C, O)
 		-- uses FloatBorder.fg and Pmenu.bg
 		highlights["BlinkCmpMenuBorder"] = {
 			fg = C.blue,
-			bg = (O.transparent_background and vim.o.pumblend == 0) and C.none or C.mantle,
+			bg = (O.transparent_background and btv.o.pumblend == 0) and C.none or C.mantle,
 		}
 		highlights["BlinkCmpDocBorder"] = { link = "FloatBorder" }
 	end
