@@ -58,6 +58,10 @@ bash scripts/gen-vimdoc.sh # regenerate doc/catppuccin-bemtvi.txt after editing 
 pre-commit install --hook-type pre-commit --hook-type pre-push
 ```
 
+The palette files under `lua/catppuccin/palettes/` are generated from the official
+Catppuccin palette by [whiskers](https://github.com/catppuccin/whiskers):
+`whiskers palettes.tera`.
+
 ## Credits
 
 Based on [catppuccin/nvim](https://github.com/catppuccin/nvim) and the wider

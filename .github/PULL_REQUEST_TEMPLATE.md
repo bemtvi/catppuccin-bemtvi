@@ -1,16 +1,9 @@
-🎉 First off, thanks for taking the time to contribute! 🎉
+Thanks for contributing! Before opening the PR:
 
-Here are some guidelines:
-- Format code using [stylua](https://github.com/johnnymorganz/stylua).
-- New plugin integration should be added in alphabetical order:
-  - to the [README](https://github.com/catppuccin/nvim#integrations) (vimdoc is auto-generated).
-  - to [types.lua](https://github.com/catppuccin/nvim/blob/main/lua/catppuccin/types.lua)
-- Create a topic branch on your fork for your specific PR.
-- Use [conventionalcommits.org's](https://www.conventionalcommits.org/en/v1.0.0/)
-  rules for explicit and meaningful commit messages.
-- If it's your first time contributing to a project, then read
-  [About pull requests](https://docs.github.com/en/github/collaborating-with-pull-requests/proposing-changes-to-your-work-with-pull-requests/about-pull-requests)
-  on Github's docs.
-
-Here are some tips:
-- Use `vim.g.catppuccin_debug = true` to get live config re-loading
+- Format and lint: `stylua .` and `selene .` (selene built with the Lua 5.4 grammar:
+  `cargo install selene --features selene-lib/lua54`). The pre-commit hooks run both.
+- Run the specs: `bemtvi --test-plugin .`, and add a case for new behaviour.
+- If you changed `doc/catppuccin-bemtvi.md`, regenerate the help with
+  `bash scripts/gen-vimdoc.sh` and commit `doc/catppuccin-bemtvi.txt` too.
+- Target `btv.*` only; no `vim.*` calls.
+- Use [Conventional Commits](https://www.conventionalcommits.org/en/v1.0.0/) messages.

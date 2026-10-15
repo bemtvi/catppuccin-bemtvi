@@ -1,5 +1,5 @@
 {
-  "runtime.version": "LuaJIT",
-  "workspace.library": ["${3rd}/luv/library", "$VIMRUNTIME/lua"],
+  "runtime.version": "Lua 5.4",
+  "diagnostics.globals": ["btv"],
   "workspace.checkThirdParty": false
 }
