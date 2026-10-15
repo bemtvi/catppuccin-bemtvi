@@ -1,337 +1,147 @@
----@class Catppuccin
----@field options CatppuccinOptions
----@field setup fun(opts: CatppuccinOptions?)
+-- LuaLS type annotations for catppuccin-bemtvi. They describe exactly what this port
+-- reads; see `doc/catppuccin-bemtvi.md` (`:help catppuccin-bemtvi`) for the prose.
 
----@alias CtpFlavor "mocha" | "macchiato" | "frappe" | "latte" | "auto"
+---@class Catppuccin
+---@field options CatppuccinOptions The options in effect (defaults merged with `setup`).
+---@field default_options CatppuccinOptions
+---@field flavours table<CtpFlavour, integer> The flavour names, in latte..mocha order.
+---@field flavour CtpFlavour? The flavour loaded last.
+---@field setup fun(opts: CatppuccinOptions?)
+---@field load fun(flavour: CtpFlavour?) Load a flavour (`nil` picks one like plain `:colorscheme catppuccin`).
+
+---@alias CtpFlavour "latte" | "frappe" | "macchiato" | "mocha"
 ---@alias CtpColor "rosewater" | "flamingo" | "pink" | "mauve" | "red" | "maroon" | "peach" | "yellow" | "green" | "teal" | "sky" | "sapphire" | "blue" | "lavender" | "text" | "subtext1" | "subtext0" | "overlay2" | "overlay1" | "overlay0" | "surface2" | "surface1" | "surface0" | "base" | "mantle" | "crust"
----@class CtpFlavors<T>: {all: T, mocha: T, macchiato: T, frappe: T, latte: T }
----@class CtpColors<T>: {rosewater: T, flamingo: T, pink: T, mauve: T, red: T, maroon: T, peach: T, yellow: T, green: T, teal: T, sky: T, sapphire: T, blue: T, lavender: T, text: T, subtext1: T, subtext0: T, overlay2: T, overlay1: T, overlay0: T, surface2: T, surface1: T, surface0: T, base: T, mantle: T, crust: T, none: T }
+---@class CtpFlavours<T>: { all: T, latte: T, frappe: T, macchiato: T, mocha: T }
+-- A palette: each colour name to a `"#rrggbb"` string. Inside `custom_highlights` and
+-- `highlight_overrides` functions it also carries `none = "NONE"`.
+---@class CtpColors<T>: { rosewater: T, flamingo: T, pink: T, mauve: T, red: T, maroon: T, peach: T, yellow: T, green: T, teal: T, sky: T, sapphire: T, blue: T, lavender: T, text: T, subtext1: T, subtext0: T, overlay2: T, overlay1: T, overlay0: T, surface2: T, surface1: T, surface0: T, base: T, mantle: T, crust: T, none: T? }
 
 ---@class CatppuccinOptions
--- Changes the flavor based on the background. See `:h background` for more info.
+-- The flavour plain `catppuccin` loads; `"auto"` defers to `background`.
+---@field flavour CtpFlavour | "auto" | nil
+-- The flavour plain `catppuccin` uses for each `btv.o.background` value.
 ---@field background CtpBackground?
--- By default catppuccin writes the compiled results into the system's cache directory.
--- You can change the cache dir by changing this value.
----@field compile_path string?
--- Whether to enable transparency.
+-- Drop the background of `Normal`, `NormalNC`, `Folded`, the popup menu, the
+-- statusline and the diagnostic virtual text.
 ---@field transparent_background boolean?
 ---@field float CtpFloatOpts?
--- If true, sets terminal colors (e.g. `g:terminal_color_0`).
+-- Set `btv.g.terminal_color_0` .. `btv.g.terminal_color_15` from the palette.
 ---@field term_colors boolean?
--- Workaround for kitty transparency issue: https://github.com/kovidgoyal/kitty/issues/2917
+-- Nudge each palette colour's blue channel by one step, so kitty does not treat a
+-- background that matches its own as transparent.
 ---@field kitty boolean?
--- Settings for dimming of inactive windows.
 ---@field dim_inactive CtpDimInactive?
--- Disables all italic styles.
+-- Strip italic from every group.
 ---@field no_italic boolean?
--- Disables all bold styles.
+-- Strip bold from every group.
 ---@field no_bold boolean?
--- Disables all underline styles.
+-- Strip underline from every group.
 ---@field no_underline boolean?
--- Handles the style of general hl groups (see `:h highlight-groups`).
+-- Attributes for the syntax and treesitter groups.
 ---@field styles CtpStyles?
--- Handles the style of specific lsp hl groups (see `:h lsp-highlight`).
+-- Attributes for the diagnostic and LSP groups.
 ---@field lsp_styles CtpLspStyles?
--- Should default integrations be used.
----@field default_integrations boolean?
--- Should detect integrations automatically
----@field auto_integrations boolean?
--- Toggle integrations. Integrations allow Catppuccin to set the theme of various plugins.
----@field integrations CtpIntegrations?
--- Catppuccin colors can be overwritten here.
----@field color_overrides CtpColors | CtpFlavors<CtpColors<string>> | nil
--- Catppuccin highlights can be overwritten here.
+-- Replace palette colours, for every flavour (`all`) or one.
+---@field color_overrides CtpColorOverrides?
+-- Override groups per flavour (`all` for every flavour).
 ---@field highlight_overrides CtpHighlightOverrides?
--- Global highlight overrides.
----@field custom_highlights CtpHighlightOverrideFn | {[string]: CtpHighlight} | nil
--- The default flavor to use on startup.
----@field flavour CtpFlavor?
+-- Override groups in every flavour; takes the place of `highlight_overrides.all`.
+---@field custom_highlights CtpHighlightOverrideFn | CtpHighlightTable | nil
+---@field integrations CtpIntegrations?
 
 ---@class CtpBackground
--- Catppuccin flavor to use when `:set background=dark` is set.
----@field dark CtpFlavor?
--- Catppuccin flavor to use when `:set background=light` is set.
----@field light CtpFlavor?
+-- The flavour for `btv.o.background = "dark"`.
+---@field dark CtpFlavour?
+-- The flavour for `btv.o.background = "light"`.
+---@field light CtpFlavour?
 
 ---@class CtpFloatOpts
----@field transparent boolean enable transparent floating windows
----@field solid boolean use solid style floating windows, see |winborder|
+-- Drop the float background while `btv.o.winblend` is `0`.
+---@field transparent boolean?
+-- Paint float, popup-menu and picker borders in the background colour.
+---@field solid boolean?
 
 ---@class CtpDimInactive
--- Whether to dim inactive windows.
----@field enabled boolean
--- Whether to darken or lighten inactive windows.
+-- Give inactive windows (`NormalNC`) their own background.
+---@field enabled boolean?
+-- Darken or lighten that background.
 ---@field shade "dark" | "light" | nil
--- Percentage of the shade to apply to the inactive window
+-- How much to shade it, from 0 to 1.
 ---@field percentage number?
 
 ---@class CtpStyles
--- Change the style of comments.
 ---@field comments CtpHighlightArgs[]?
--- Change the style of conditionals.
 ---@field conditionals CtpHighlightArgs[]?
--- Change the style of loops.
 ---@field loops CtpHighlightArgs[]?
--- Change the style of functions.
 ---@field functions CtpHighlightArgs[]?
--- Change the style of keywords.
 ---@field keywords CtpHighlightArgs[]?
--- Change the style of strings.
 ---@field strings CtpHighlightArgs[]?
--- Change the style of variables.
 ---@field variables CtpHighlightArgs[]?
--- Change the style of numbers.
 ---@field numbers CtpHighlightArgs[]?
--- Change the style of booleans.
 ---@field booleans CtpHighlightArgs[]?
--- Change the style of properties.
 ---@field properties CtpHighlightArgs[]?
--- Change the style of types.
 ---@field types CtpHighlightArgs[]?
--- Change the style of operators.
 ---@field operators CtpHighlightArgs[]?
--- Change the style of miscs.
+-- `@module` and `@tag.attribute` (italic when unset).
 ---@field miscs CtpHighlightArgs[]?
 
 ---@class CtpLspStyles
--- Styles to apply to virtual text.
+-- Attributes for the `Diagnostic*` and `DiagnosticVirtualText*` groups.
 ---@field virtual_text CtpLspDiagnosticStyles?
--- Styles to apply to underlines.
+-- Attributes for the `DiagnosticUnderline*` groups.
 ---@field underlines CtpLspDiagnosticStyles?
--- Inlay hints options.
 ---@field inlay_hints CtpLspStylesInlayHints?
 
 ---@class CtpLspDiagnosticStyles
--- Change the style of LSP error diagnostics.
 ---@field errors CtpHighlightArgs[]?
--- Change the style of LSP hint diagnostics.
 ---@field hints CtpHighlightArgs[]?
--- Change the style of LSP warning diagnostics.
 ---@field warnings CtpHighlightArgs[]?
--- Change the style of LSP information diagnostics.
 ---@field information CtpHighlightArgs[]?
--- Change the style of LSP ok diagnostics.
 ---@field ok CtpHighlightArgs[]?
 
 ---@class CtpLspStylesInlayHints
--- Toggle the background of inlay hints.
+-- Give `LspInlayHint` a background.
 ---@field background boolean?
 
+---@alias CtpColorOverrides CtpFlavours<CtpColors<string>>
+
 ---@class CtpIntegrations
----@field aerial boolean?
----@field alpha boolean?
----@field artio boolean?
----@field avante CtpIntegratinAvant | boolean?
----@field barbar boolean?
--- Use this to set it up:
---
--- ```lua
--- require("barbecue").setup {
--- -- valid options:
--- -- "catppuccin-latte"
--- -- "catppuccin-frappe"
--- -- "catppuccin-macchiato"
--- -- "catppuccin-mocha"
---   theme = "catppuccin",
--- }
----```
----@field barbecue CtpIntegrationBarbecue | boolean?
----@field beacon boolean?
----@field blink_cmp CtpIntegrationsBlinkCmp | boolean?
----@field blink_indent boolean?
----@field blink_pairs boolean?
----@field cmp boolean?
----@field buffon boolean?
--- `coc.nvim` links to `lsp_styles` highlight groups, so you can use
--- `lsp_styles.virtual_text` and `lsp_styles.underlines` to style diagnostics.
----@field coc_nvim boolean?
----@field colorful_winsep CtpIntegrationColorfulWinsep | boolean?
----@field copilot_vim boolean?
--- ```lua
--- local sign = vim.fn.sign_define
---
--- sign("DapBreakpoint", { text = "●", texthl = "DapBreakpoint", linehl = "", numhl = ""})
--- sign("DapBreakpointCondition", { text = "●", texthl = "DapBreakpointCondition", linehl = "", numhl = ""})
--- sign("DapLogPoint", { text = "◆", texthl = "DapLogPoint", linehl = "", numhl = ""})
--- ```
----@field dadbod_ui boolean?
----@field dap boolean?
----@field dap_ui boolean?
----@field dashboard boolean?
----@field diffview boolean?
----@field dropbar CtpIntegrationDropbar | boolean?
----@field fern boolean?
--- Set `notification.window.winblend` to `0` in your `fidget` config:
---
--- ```lua
--- require("fidget").setup {
---   notification = {
---     window = { winblend = 0 },
---   }
--- }
--- ```
----@field fidget boolean?
----@field flash boolean?
----@field fzf boolean?
----@field gitgutter boolean?
----@field gitgraph boolean?
----@field gitsigns CtpIntegrationGitsigns | boolean?
----@field grug_far boolean?
----@field harpoon boolean?
----@field headlines boolean?
----@field hop boolean?
----@field illuminate CtpIntegrationIlluminate | boolean?
----@field indent_blankline CtpIntegrationIndentBlankline | boolean?
----@field leap boolean?
----@field lightspeed boolean?
----@field lir CtpIntegrationLir | boolean?
--- For custom Lsp kind icon and colors, adjust your `lspsaga` config:
---
--- ```lua
--- require("lspsaga").setup {
---    ui = {
---        kind = require("catppuccin.groups.integrations.lsp_saga").custom_kind(),
---    },
--- }
--- ```
----@field lsp_saga boolean?
----@field lsp_trouble boolean?
----@field lualine CtpIntegrationLualine?
----@field markview boolean?
----@field mason boolean?
--- You **NEED** to enable highlight in your `nvim-navic` config or it won't work:
---
--- ```lua
--- require("nvim-navic").setup {
---		highlight = true
--- }
--- ```
----@field navic CtpIntegrationNavic | boolean?
----@field neogit boolean?
----@field neotest boolean?
----@field neotree boolean?
----@field noice boolean?
----@field notify boolean?
----@field nvim_surround boolean?
----@field nvimtree boolean?
----@field octo boolean?
----@field overseer boolean?
----@field pounce boolean?
----@field rainbow_delimiters boolean?
----@field render_markdown boolean?
----@field sandwich boolean?
----@field snacks CtpIntegrationSnacks | boolean?
----@field signify boolean?
----@field symbols_outline boolean?
----@field telekasten boolean?
----@field telescope CtpIntegrationTelescope | boolean?
----@field treesitter_context boolean?
----@field ts_rainbow boolean?
----@field ts_rainbow2 boolean?
----@field vim_sneak boolean?
----@field vimwiki boolean?
----@field which_key boolean?
----@field window_picker boolean?
+---@field blink_cmp CtpIntegrationBlinkCmp?
+-- Overrides for the `lualine.themes.catppuccin-*` tables bemtvi-line reads, or `false`.
+---@field lualine CtpIntegrationLualine | false | nil
 
----@class CtpIntegratinAvant
---  Whether the opts.windows.sidebar_header.rounded option is set on Avante
----@field enabled boolean
----@field windows_sidebar_header_rounded boolean?
+---@class CtpIntegrationBlinkCmp
+-- `"bordered"` (the default) also defines `BlinkCmpMenuBorder` and `BlinkCmpDocBorder`.
+---@field style "bordered" | "solid" | nil
 
----@class CtpIntegrationBarbecue
---  Whether to use the alternative background.
----@field alt_background boolean?
--- Whether the basename should be bold.
----@field bold_basename boolean?
--- Whether the context should be dimmed.
----@field dim_context boolean?
--- Whether the directory name should be dimmed.
----@field dim_dirname boolean?
-
----@class CtpIntegrationsBlinkCmp
---- The border style for the completion menu
----@field style 'solid'|'bordered'
-
----@class CtpIntegrationColorfulWinsep
--- Whether to enable the colorful-winsep integration.
----@field enabled boolean
--- Set to a Catppuccin color name to use for the split separator.
----@field color CtpColor?
-
----@class CtpIntegrationDropbar
--- Whether to enable the dropbar integration.
----@field enabled boolean
--- Set to true to apply color to the text in dropbar, false to only apply it to the icons.
----@field color_mode boolean?
-
----@class CtpIntegrationGitsigns
---- Whether to enable the gitsigns integration
----@field enabled boolean
---- Whether to enabled transparent background option
----@field transparent boolean?
-
----@class CtpIntegrationIndentBlankline
--- Whether to enable the integration.
----@field enabled boolean
--- Sets the color of the scope line
----@field scope_color CtpColor?
--- Enables char highlights per indent level.
--- Follow the instructions on the plugins GitHub repo to set it up.
----@field colored_indent_levels boolean?
-
----@class CtpIntegrationLir
--- Whether to enable the integration.
----@field enabled boolean
--- Sets lir-git-status.nvim highlight groups
----@field git_status boolean
-
----@class CtpIntegrationMini
--- Whether to enable the integration.
----@field enabled boolean
--- Sets the color of the scope line
----@field indentscope_color CtpColor?
-
----@alias CtpIntegrationLualine CtpFlavors<CtpIntegrationLualineOverride | CtpIntegrationLualineOverrideFn>
----@alias CtpIntegrationLualineOverride CtpIntegrationLualineModes<CtpIntegrationLualineSectionOverrides>
+---@alias CtpIntegrationLualine CtpFlavours<CtpIntegrationLualineOverride | CtpIntegrationLualineOverrideFn>
+---@alias CtpIntegrationLualineOverride CtpIntegrationLualineModes<CtpIntegrationLualineSections<CtpIntegrationLualineSectionOverride>>
 ---@alias CtpIntegrationLualineOverrideFn fun(colors: CtpColors<string>): CtpIntegrationLualineOverride
----@alias CtpIntegrationLualineMode "normal" | "insert" | "visual" | "replace" | "command" | "terminal" | "inactive"
----@class CtpIntegrationLualineModes<T>: { all: T, normal: T, insert: T, visual: T, replace: T, command: T, terminal: T, inactive: T }
----@alias CtpIntegrationLualineSectionOverrides CtpIntegrationLualineSections<CtpIntegrationLualineSectionOverride>
----@alias CtpIntegrationLualineSection "a" | "b" | "c"
+---@class CtpIntegrationLualineModes<T>: { normal: T, insert: T, visual: T, replace: T, command: T, terminal: T, inactive: T }
 ---@class CtpIntegrationLualineSections<T>: { a: T, b: T, c: T }
 ---@class CtpIntegrationLualineSectionOverride
 ---@field fg string?
 ---@field bg string?
----@field gui string? `gui` argument such as "italic,bold", see |highlight-gui|
+-- Attributes as a comma-separated string, e.g. `"bold,italic"`.
+---@field gui string?
 
----@class CtpIntegrationNavic
--- Whether to enable the navic integration.
----@field enabled boolean
--- Override the background color for navic.
----@field custom_bg CtpColor | "NONE" | "lualine" | nil
+-- The attributes `btv.hl.define` honours.
+---@alias CtpHighlightArgs "bold" | "italic" | "underline" | "undercurl" | "strikethrough" | "reverse"
+---@alias CtpHighlightTable { [string]: CtpHighlight }
+---@alias CtpHighlightOverrideFn fun(colors: CtpColors<string>): CtpHighlightTable
+---@alias CtpHighlightOverrides CtpFlavours<CtpHighlightOverrideFn | CtpHighlightTable>
 
----@class CtpIntegrationSnacks
--- Whether to enable the snacks integration.
----@field enabled boolean
--- Sets the color of the indent scope line
----@field indent_scope_color CtpColor?
-
----@class CtpIntegrationTelescope
--- Whether to enable the telescope integration
----@field enabled boolean?
-
----@class CtpIntegrationIlluminate
--- Whether to enable the vim-illuminate integration
----@field enabled boolean?
--- Whether to standout IlluminatedWordWrite hl group
----@field lsp boolean?
-
----@alias CtpHighlightArgs "bold" | "underline" | "undercurl" | "underdouble" | "underdotted" | "underdashed" | "strikethrough" | "reverse" | "inverse" | "italic" | "standout" | "altfont" | "nocombine" | "NONE"
----@alias CtpHighlightOverrideFn fun(colors: CtpColors<string>): { [string]: CtpHighlight}
----@alias CtpHighlightOverrides CtpFlavors<CtpHighlightOverrideFn>
-
+-- A group spec, as handed to `btv.hl.define` (a `style` list is expanded into the
+-- boolean attributes first).
 ---@class CtpHighlight
 ---@field fg string?
 ---@field bg string?
----@field style CtpHighlightArgs[]?
+---@field sp string?
 ---@field link string?
+---@field style CtpHighlightArgs[]?
+---@field bold boolean?
+---@field italic boolean?
+---@field underline boolean?
+---@field undercurl boolean?
+---@field strikethrough boolean?
+---@field reverse boolean?

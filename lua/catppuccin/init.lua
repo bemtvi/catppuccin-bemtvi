@@ -1,4 +1,4 @@
----@type Catppuccin
+---@class Catppuccin
 local M = {
 	default_options = {
 		flavour = "auto",
@@ -96,7 +96,8 @@ function M.load(flavour)
 		M.options.flavour = nil -- ensure that this will only run once on startup
 	end
 	if not did_setup then M.setup() end
-	M.flavour = get_flavour(flavour)
+	-- `options.flavour` can no longer be `"auto"` here (cleared above).
+	M.flavour = get_flavour(flavour) --[[@as CtpFlavour]]
 	require("catppuccin.lib.loader").load(M.flavour)
 end
 

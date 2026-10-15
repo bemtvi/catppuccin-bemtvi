@@ -196,9 +196,10 @@ group, whatever `styles` says.
 
 ## styles
 
-Each key takes a list of attributes (`"bold"`, `"italic"`, `"underline"`,
-`"undercurl"`, `"strikethrough"`, …) applied to the matching syntax and
-treesitter groups.
+Each key takes a list of attributes applied to the matching syntax and
+treesitter groups: `"bold"`, `"italic"`, `"underline"`, `"undercurl"`,
+`"strikethrough"` or `"reverse"`, the ones `btv.hl.define` honours. `miscs`
+covers `@module` and `@tag.attribute`, which are italic when it is unset.
 
 ## lsp_styles
 
