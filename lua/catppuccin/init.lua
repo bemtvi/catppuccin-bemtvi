@@ -115,6 +115,18 @@ btv.command("Catppuccin", function(inp)
 		btv.notify("Catppuccin (error): missing flavour argument", btv.log.levels.ERROR)
 		return
 	end
+	-- An explicit request for a flavour that doesn't exist is refused, not quietly
+	-- swapped for the fallback chain `get_flavour` uses at colorscheme load.
+	if not M.flavours[inp.args] then
+		btv.notify(
+			string.format(
+				"Catppuccin (error): Invalid flavour '%s', flavour must be 'latte', 'frappe', 'macchiato' or 'mocha'",
+				inp.args
+			),
+			btv.log.levels.ERROR
+		)
+		return
+	end
 	btv.cmd("colorscheme catppuccin-" .. get_flavour(inp.args))
 end, {
 	desc = "Switch the Catppuccin flavour",

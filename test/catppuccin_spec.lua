@@ -95,6 +95,13 @@ btv.test.describe("catppuccin flavours", function()
 		expect(t:message()).to_contain "missing flavour"
 	end)
 
+	btv.test.it(":Catppuccin with an unknown flavour keeps the current flavour", function(t)
+		t:cmd "colorscheme catppuccin-frappe"
+		t:cmd "Catppuccin espresso"
+		expect(btv.g.colors_name).to_equal "catppuccin-frappe"
+		expect(t:message()).to_contain "Invalid flavour 'espresso'"
+	end)
+
 	btv.test.it("load() fires ColorScheme with the new name", function(t)
 		local seen
 		btv.autocmd.create("ColorScheme", { callback = function(ev) seen = ev.match end })
