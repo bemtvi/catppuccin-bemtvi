@@ -1,0 +1,407 @@
+*catppuccin-bemtvi.txt*                       Soothing pastel theme for bemtvi
+
+==============================================================================
+Table of Contents                        *catppuccin-bemtvi-table-of-contents*
+
+1. Flavours                                       |catppuccin-bemtvi-flavours|
+2. Installation                               |catppuccin-bemtvi-installation|
+3. Usage                                             |catppuccin-bemtvi-usage|
+  - Colorschemes                        |catppuccin-bemtvi-usage-colorschemes|
+  - :Catppuccin                          |catppuccin-bemtvi-usage-:catppuccin|
+  - Lua                                          |catppuccin-bemtvi-usage-lua|
+4. Configuration                             |catppuccin-bemtvi-configuration|
+  - flavour                          |catppuccin-bemtvi-configuration-flavour|
+  - background                    |catppuccin-bemtvi-configuration-background|
+  - transparent_background|catppuccin-bemtvi-configuration-transparent_background|
+  - float                              |catppuccin-bemtvi-configuration-float|
+  - term_colors                  |catppuccin-bemtvi-configuration-term_colors|
+  - kitty                              |catppuccin-bemtvi-configuration-kitty|
+  - dim_inactive                |catppuccin-bemtvi-configuration-dim_inactive|
+  - Attribute toggles      |catppuccin-bemtvi-configuration-attribute-toggles|
+  - styles                            |catppuccin-bemtvi-configuration-styles|
+  - lsp_styles                    |catppuccin-bemtvi-configuration-lsp_styles|
+  - color_overrides          |catppuccin-bemtvi-configuration-color_overrides|
+  - custom_highlights      |catppuccin-bemtvi-configuration-custom_highlights|
+  - highlight_overrides  |catppuccin-bemtvi-configuration-highlight_overrides|
+  - integrations                |catppuccin-bemtvi-configuration-integrations|
+5. Plugin integrations                 |catppuccin-bemtvi-plugin-integrations|
+  - bemtvi UI                |catppuccin-bemtvi-plugin-integrations-bemtvi-ui|
+  - bemtvi plugins      |catppuccin-bemtvi-plugin-integrations-bemtvi-plugins|
+  - Statusline theme  |catppuccin-bemtvi-plugin-integrations-statusline-theme|
+  - Other groups          |catppuccin-bemtvi-plugin-integrations-other-groups|
+6. Palettes                                       |catppuccin-bemtvi-palettes|
+7. Differences                                 |catppuccin-bemtvi-differences|
+
+Catppuccin for bemtvi: the soothing pastel theme in four flavours, ported from
+<https://github.com/catppuccin/nvim> to bemtvi's native `btv.*` API.
+
+The palettes and highlight-group definitions are upstream's. The loader is
+bemtvi's own: every group is defined directly with `btv.hl.define` when the
+colorscheme loads, so there is no compile step and no cache directory.
+
+                                                *catppuccin-bemtvi* *catppuccin*
+
+
+==============================================================================
+1. Flavours                                       *catppuccin-bemtvi-flavours*
+
+- `latte`: the light flavour
+- `frappe`: a less vibrant dark flavour
+- `macchiato`: medium-contrast dark flavour
+- `mocha`: the darkest flavour
+
+
+==============================================================================
+2. Installation                               *catppuccin-bemtvi-installation*
+
+Declare it with the built-in plugin manager in your `init.lua`:
+
+>lua
+    btv.plugins({
+      {
+        "bemtvi/catppuccin-bemtvi",
+        config = function()
+          require("catppuccin").setup({})
+          btv.cmd("colorscheme catppuccin-mocha")
+        end,
+      },
+    })
+<
+
+Then run `:PluginSync` to clone it. A local checkout works too: put its
+directory on the runtimepath (`btv.o.runtimepath = btv.o.runtimepath ..
+",/path/to/catppuccin-bemtvi"`).
+
+
+==============================================================================
+3. Usage                                             *catppuccin-bemtvi-usage*
+
+
+COLORSCHEMES                            *catppuccin-bemtvi-usage-colorschemes*
+
+>vim
+    colorscheme catppuccin-latte
+    colorscheme catppuccin-frappe
+    colorscheme catppuccin-macchiato
+    colorscheme catppuccin-mocha
+    colorscheme catppuccin
+<
+
+The plain `catppuccin` picks a flavour when it loads: the `flavour` option if
+you set one, otherwise the flavour that `background` maps the current
+`btv.o.background` to (`dark` gives `mocha`, `light` gives `latte` by default).
+The choice is made at load time; changing `background` afterwards does not
+reload the theme.
+
+>lua
+    btv.o.background = "light"
+    btv.cmd("colorscheme catppuccin") -- loads catppuccin-latte
+<
+
+Loading a flavour sets `btv.g.colors_name` to `catppuccin-<flavour>`, sets
+`btv.o.background` to match it, and fires the `ColorScheme` event, so plugins
+that derive their colours from the theme repaint.
+
+
+:CATPPUCCIN                              *catppuccin-bemtvi-usage-:catppuccin*
+
+`:Catppuccin {flavour}` switches to another flavour. `<Tab>` completes the
+flavour names. Without an argument it reports an error and changes nothing.
+
+
+LUA                                              *catppuccin-bemtvi-usage-lua*
+
+`require("catppuccin").load(flavour)` loads a flavour directly (`nil` picks one
+the way plain `catppuccin` does) and fires `ColorScheme` like `:colorscheme`
+does.
+
+
+==============================================================================
+4. Configuration                             *catppuccin-bemtvi-configuration*
+
+Calling `setup` is optional; the defaults below apply without it. Call it
+before selecting the colorscheme, or select the colorscheme again afterwards.
+
+>lua
+    require("catppuccin").setup({
+      flavour = "auto", -- "latte", "frappe", "macchiato", "mocha", or "auto"
+      background = { -- the flavour plain `catppuccin` uses per background
+        light = "latte",
+        dark = "mocha",
+      },
+      transparent_background = false,
+      float = {
+        transparent = false,
+        solid = false,
+      },
+      term_colors = false,
+      kitty = false,
+      dim_inactive = {
+        enabled = false,
+        shade = "dark",
+        percentage = 0.15,
+      },
+      no_italic = false,
+      no_bold = false,
+      no_underline = false,
+      styles = {
+        comments = { "italic" },
+        conditionals = { "italic" },
+        loops = {},
+        functions = {},
+        keywords = {},
+        strings = {},
+        variables = {},
+        numbers = {},
+        booleans = {},
+        properties = {},
+        types = {},
+        operators = {},
+        -- miscs = { "italic" }, -- `@module` and `@tag.attribute`
+      },
+      lsp_styles = {
+        virtual_text = {
+          errors = { "italic" },
+          hints = { "italic" },
+          warnings = { "italic" },
+          information = { "italic" },
+          ok = { "italic" },
+        },
+        underlines = {
+          errors = { "underline" },
+          hints = { "underline" },
+          warnings = { "underline" },
+          information = { "underline" },
+          ok = { "underline" },
+        },
+        inlay_hints = {
+          background = true,
+        },
+      },
+      color_overrides = {},
+      highlight_overrides = {},
+      custom_highlights = {},
+      integrations = {
+        blink_cmp = { style = "bordered" },
+        lualine = false,
+      },
+    })
+<
+
+
+FLAVOUR                              *catppuccin-bemtvi-configuration-flavour*
+
+The flavour plain `catppuccin` loads. `"auto"` (the default) defers to
+`background`.
+
+
+BACKGROUND                        *catppuccin-bemtvi-configuration-background*
+
+Maps `btv.o.background` (`light` or `dark`) to a flavour for plain `catppuccin`
+when `flavour` is `"auto"`.
+
+
+TRANSPARENT_BACKGROUND*catppuccin-bemtvi-configuration-transparent_background*
+
+Drops the background of `Normal`, `NormalNC`, `Folded`, the popup menu (while
+`btv.o.pumblend` is `0`), `StatusLine`, `TabLineFill` and the diagnostic
+virtual text, so the terminal's own background shows through.
+
+
+FLOAT                                  *catppuccin-bemtvi-configuration-float*
+
+`float.transparent` drops the background of `NormalFloat`, `FloatBorder` and
+`FloatTitle` (only while `btv.o.winblend` is `0`). `float.solid` paints float,
+popup-menu and picker borders in the background colour, so the border reads as
+solid padding, and gives float titles a lavender block.
+
+
+TERM_COLORS                      *catppuccin-bemtvi-configuration-term_colors*
+
+Sets `btv.g.terminal_color_0` through `btv.g.terminal_color_15` from the
+palette, for the built-in terminal.
+
+
+KITTY                                  *catppuccin-bemtvi-configuration-kitty*
+
+Nudges every palette colour's blue channel by one step. Kitty treats a
+background that exactly matches its own as transparent; this keeps the editor
+opaque there.
+
+
+DIM_INACTIVE                    *catppuccin-bemtvi-configuration-dim_inactive*
+
+`enabled` gives `NormalNC` (inactive windows) its own background: darker than
+`base` with `shade = "dark"`, lighter with `shade = "light"`, by `percentage`
+(0 to 1).
+
+
+ATTRIBUTE TOGGLES          *catppuccin-bemtvi-configuration-attribute-toggles*
+
+`no_italic`, `no_bold` and `no_underline` strip that attribute from every
+group, whatever `styles` says.
+
+
+STYLES                                *catppuccin-bemtvi-configuration-styles*
+
+Each key takes a list of attributes (`"bold"`, `"italic"`, `"underline"`,
+`"undercurl"`, `"strikethrough"`, …) applied to the matching syntax and
+treesitter groups.
+
+
+LSP_STYLES                        *catppuccin-bemtvi-configuration-lsp_styles*
+
+`virtual_text` styles the `Diagnostic*` text groups, `underlines` the
+`DiagnosticUnderline*` groups. `inlay_hints.background = false` drops the
+background of `LspInlayHint`.
+
+
+COLOR_OVERRIDES              *catppuccin-bemtvi-configuration-color_overrides*
+
+Replaces palette colours, for every flavour (`all`) or one:
+
+>lua
+    require("catppuccin").setup({
+      color_overrides = {
+        all = { text = "#ffffff" },
+        latte = { base = "#ff0000" },
+        mocha = { base = "#000000" },
+      },
+    })
+<
+
+
+CUSTOM_HIGHLIGHTS          *catppuccin-bemtvi-configuration-custom_highlights*
+
+Overrides any group, in every flavour. A table, or a function that receives the
+active flavour's palette:
+
+>lua
+    require("catppuccin").setup({
+      custom_highlights = function(colors)
+        return {
+          Comment = { fg = colors.flamingo },
+          Pmenu = { bg = colors.none },
+          NvimTreeFolderName = { fg = colors.mauve },
+        }
+      end,
+    })
+<
+
+A group spec takes `fg`, `bg`, `sp`, `link`, and either boolean attributes
+(`bold = true`) or a `style` list (`style = { "bold", "italic" }`).
+
+
+HIGHLIGHT_OVERRIDES      *catppuccin-bemtvi-configuration-highlight_overrides*
+
+The same, per flavour, with `all` for every flavour. `custom_highlights` takes
+the place of `highlight_overrides.all` when both are given.
+
+>lua
+    require("catppuccin").setup({
+      highlight_overrides = {
+        mocha = function(mocha)
+          return { Comment = { fg = mocha.flamingo } }
+        end,
+      },
+    })
+<
+
+
+INTEGRATIONS                    *catppuccin-bemtvi-configuration-integrations*
+
+`integrations.blink_cmp.style = "bordered"` (the default) also defines
+`BlinkCmpMenuBorder` and `BlinkCmpDocBorder`; any other value leaves them out.
+`integrations.lualine` overrides the statusline theme tables (see "Statusline
+theme" below): a table or a function of the palette, keyed by `all` or a
+flavour, then by mode (`normal`, `insert`, `visual`, `replace`, `command`,
+`terminal`, `inactive`) and section (`a`, `b`, `c`).
+
+>lua
+    require("catppuccin").setup({
+      integrations = {
+        lualine = {
+          all = function(colors)
+            return { normal = { a = { bg = colors.mauve } } }
+          end,
+        },
+      },
+    })
+<
+
+
+==============================================================================
+5. Plugin integrations                 *catppuccin-bemtvi-plugin-integrations*
+
+Every flavour defines the groups below unconditionally; there is nothing to
+enable.
+
+
+BEMTVI UI                    *catppuccin-bemtvi-plugin-integrations-bemtvi-ui*
+
+- The fuzzy picker reads `TelescopeNormal`, `TelescopeSelection`,
+    `TelescopeMatching`, `TelescopeBorder`, `TelescopePromptPrefix`,
+    `TelescopeTitle`, `TelescopePreviewNormal` and `TelescopePreviewBorder`.
+- The completion popup reads `Pmenu`, `PmenuSel`, `CmpItemAbbrMatch` and
+    `FloatBorder`.
+- The statusline reads `StatusLineMode` (the mode badge) and
+    `StatusLineModified` (the `[+]` flag).
+
+
+BEMTVI PLUGINS          *catppuccin-bemtvi-plugin-integrations-bemtvi-plugins*
+
+- bemtvi-tree: the `NvimTree*` groups (folders, files, git status, indent
+    markers).
+- bemtvi-keys-helper: `WhichKey`, `WhichKeyGroup`, `WhichKeyDesc` and
+    `WhichKeySeparator` (`WhichKeyBorder` and `WhichKeyValue` are defined too).
+
+
+STATUSLINE THEME      *catppuccin-bemtvi-plugin-integrations-statusline-theme*
+
+bemtvi-line's `theme = "auto"` loads `lualine.themes.<colors_name>`, which
+this plugin ships for every flavour (`catppuccin-latte`, `catppuccin-frappe`,
+`catppuccin-macchiato`, `catppuccin-mocha`, plus `catppuccin-nvim` for the
+active one). The bar follows the flavour with no extra configuration.
+
+
+OTHER GROUPS              *catppuccin-bemtvi-plugin-integrations-other-groups*
+
+The groups for nvim-cmp (`CmpItem*`), blink.cmp (`BlinkCmp*`), coc.nvim,
+copilot.vim, barbar (`Buffer*`) and buffon are kept so a bemtvi plugin or your
+own config can link to them. `catppuccin.special.bufferline` and
+`catppuccin.special.feline` still return upstream's theme tables for those
+plugins; no bemtvi plugin reads them today.
+
+
+==============================================================================
+6. Palettes                                       *catppuccin-bemtvi-palettes*
+
+`require("catppuccin.palettes").get_palette(flavour)` returns a flavour's
+colours (`rosewater`, `flamingo`, `pink`, `mauve`, `red`, `maroon`, `peach`,
+`yellow`, `green`, `teal`, `sky`, `sapphire`, `blue`, `lavender`, `text`,
+`subtext1`, `subtext0`, `overlay2`, `overlay1`, `overlay0`, `surface2`,
+`surface1`, `surface0`, `base`, `mantle`, `crust`) as `"#rrggbb"` strings, with
+`color_overrides` applied. Without an argument it returns the active
+flavour's.
+
+>lua
+    local mocha = require("catppuccin.palettes").get_palette("mocha")
+    btv.hl.define(0, "MyGroup", { fg = mocha.mauve })
+<
+
+
+==============================================================================
+7. Differences                                 *catppuccin-bemtvi-differences*
+
+- No compiler or cache: no `compile_path` and no `:CatppuccinCompile`.
+- No `integrations` toggles beyond the two above, and no
+    `default_integrations` or `auto_integrations`. The 60-odd integrations for
+    neovim plugins that have no bemtvi counterpart are gone.
+- No neovim version checks and no automatic kitty detection: upstream read
+    `KITTY_WINDOW_ID`, here `kitty` is an explicit option.
+- `:set background` is not an ex option in bemtvi yet; set it from Lua with
+    `btv.o.background`.
+
+Generated by panvimdoc <https://github.com/kdheepak/panvimdoc>
+
+vim:tw=78:ts=8:noet:ft=help:norl:
