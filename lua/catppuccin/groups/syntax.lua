@@ -1,6 +1,6 @@
 local M = {}
 
-function M.get()
+function M.get(C, O, U)
 	return {
 		Comment = { fg = C.overlay2, style = O.styles.comments }, -- just comments
 		SpecialComment = { link = "Special" }, -- special things inside a comment

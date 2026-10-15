@@ -1,6 +1,6 @@
 local M = {}
 
-function M.get()
+function M.get(C, O)
 	local colors = { -- Reference: https://github.com/nvim-treesitter/nvim-treesitter/blob/master/CONTRIBUTING.md
 		-- Identifiers
 		["@variable"] = { fg = C.text, style = O.styles.variables or {} }, -- Any variable name that does not have another highlight.

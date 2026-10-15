@@ -2,7 +2,7 @@ local M = {}
 
 M.url = "https://github.com/nvim-tree/nvim-tree.lua"
 
-function M.get()
+function M.get(C, O)
 	return {
 		NvimTreeFolderName = { fg = C.blue },
 		NvimTreeFolderIcon = { fg = C.blue },

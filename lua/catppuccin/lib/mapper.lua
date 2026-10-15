@@ -3,10 +3,12 @@ local M = {}
 function M.apply(flavour)
 	flavour = flavour or require("catppuccin").flavour
 
-	local _O, _C, _U = O, C, U -- Borrowing global var (setfenv doesn't work with require)
-	O = require("catppuccin").options
-	C = require("catppuccin.palettes").get_palette(flavour)
-	U = require "catppuccin.utils.colors"
+	-- The group modules take the options (O), palette (C) and colour utils (U)
+	-- as `get(C, O, U)` arguments. Upstream borrowed them as globals for the
+	-- duration of this call instead.
+	local O = require("catppuccin").options
+	local C = require("catppuccin.palettes").get_palette(flavour)
+	local U = require "catppuccin.utils.colors"
 
 	C.none = "NONE"
 
@@ -22,17 +24,20 @@ function M.apply(flavour)
 		)
 
 	local theme = {}
-	theme.editor =
-		vim.tbl_deep_extend("force", require("catppuccin.groups.editor").get(), require("catppuccin.groups.lsp").get())
+	theme.editor = vim.tbl_deep_extend(
+		"force",
+		require("catppuccin.groups.editor").get(C, O, U),
+		require("catppuccin.groups.lsp").get(C, O, U)
+	)
 
 	theme.syntax = {}
 	local syntax_modules = { "syntax", "semantic_tokens", "treesitter" }
 	for i = 1, #syntax_modules do
 		theme.syntax =
-			vim.tbl_deep_extend("force", theme.syntax, require("catppuccin.groups." .. syntax_modules[i]).get())
+			vim.tbl_deep_extend("force", theme.syntax, require("catppuccin.groups." .. syntax_modules[i]).get(C, O, U))
 	end
 
-	theme.bemtvi = require("catppuccin.groups.bemtvi").get() -- bemtvi native UI surfaces
+	theme.bemtvi = require("catppuccin.groups.bemtvi").get(C, O, U) -- bemtvi native UI surfaces
 
 	-- Plugin integrations whose highlight groups we keep defined unconditionally
 	-- so custom plugins can link to / reuse their names. Statusline/tabline plugins
@@ -45,11 +50,11 @@ function M.apply(flavour)
 		theme.integrations = vim.tbl_deep_extend(
 			"force",
 			theme.integrations,
-			require("catppuccin.groups.integrations." .. integration_modules[i]).get()
+			require("catppuccin.groups.integrations." .. integration_modules[i]).get(C, O, U)
 		)
 	end
 
-	theme.terminal = require("catppuccin.groups.terminal").get() -- terminal colors
+	theme.terminal = require("catppuccin.groups.terminal").get(C, O, U) -- terminal colors
 	local user_highlights = O.highlight_overrides
 	if type(user_highlights[flavour]) == "function" then user_highlights[flavour] = user_highlights[flavour](C) end
 	theme.custom_highlights = vim.tbl_deep_extend(
@@ -57,8 +62,6 @@ function M.apply(flavour)
 		user_highlights[flavour] or {},
 		type(user_highlights.all) == "function" and user_highlights.all(C) or user_highlights.all or {}
 	)
-
-	O, C, U = _O, _C, _U -- Returning global var
 
 	return theme
 end

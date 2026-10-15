@@ -2,7 +2,7 @@ local M = {}
 
 M.url = "https://github.com/saghen/blink.cmp"
 
-function M.get()
+function M.get(C, O)
 	local style = O.integrations.blink_cmp.style
 
 	local highlights = {

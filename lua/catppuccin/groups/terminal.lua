@@ -1,6 +1,6 @@
 local M = {}
 
-function M.get()
+function M.get(C)
 	return {
 		terminal_color_0 = C.overlay0,
 		terminal_color_8 = C.overlay1,

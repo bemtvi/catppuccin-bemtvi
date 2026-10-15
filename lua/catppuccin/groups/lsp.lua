@@ -1,6 +1,6 @@
 local M = {}
 
-function M.get()
+function M.get(C, O, U)
 	local virtual_text = O.lsp_styles.virtual_text
 	local underlines = O.lsp_styles.underlines
 	local inlay_hints = O.lsp_styles.inlay_hints

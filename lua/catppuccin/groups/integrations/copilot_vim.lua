@@ -2,7 +2,7 @@ local M = {}
 
 M.url = "https://github.com/github/copilot.vim"
 
-function M.get()
+function M.get(C)
 	return {
 		CopilotSuggestion = { fg = C.overlay0 },
 		CopilotAnnotation = { fg = C.blue },

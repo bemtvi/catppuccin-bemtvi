@@ -1,6 +1,6 @@
 local M = {}
 
-function M.get()
+function M.get(C, O, U)
 	local pumsolid = O.float.solid
 
 	return {

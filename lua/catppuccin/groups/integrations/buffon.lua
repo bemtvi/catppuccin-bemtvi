@@ -2,7 +2,7 @@ local M = {}
 
 M.url = "https://github.com/francescarpi/buffon.nvim"
 
-function M.get()
+function M.get(C)
 	return {
 		BuffonUnloadedBuffer = { fg = C.surface1 },
 		BuffonShortcut = { fg = C.peach },

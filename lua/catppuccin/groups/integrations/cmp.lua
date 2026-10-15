@@ -2,7 +2,7 @@ local M = {}
 
 M.url = "https://github.com/hrsh7th/nvim-cmp"
 
-function M.get()
+function M.get(C)
 	return {
 		CmpItemAbbr = { fg = C.overlay2 },
 		CmpItemAbbrDeprecated = { fg = C.overlay0, style = { "strikethrough" } },

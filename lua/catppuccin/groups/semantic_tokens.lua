@@ -1,6 +1,6 @@
 local M = {}
 
-function M.get()
+function M.get(C)
 	return {
 		-- https://neovim.io/doc/user/lsp.html#lsp-semantic-highlight
 		-- Most semantic tokens (@lsp.type.<...>) are no longer defined in this file, as Neovim links to already themed Tree-sitter captures by default.

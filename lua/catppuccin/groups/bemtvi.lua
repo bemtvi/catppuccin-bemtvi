@@ -7,7 +7,7 @@ local M = {}
 -- theme. Everything else (Pmenu, StatusLine, Visual, Search, Diagnostic*,
 -- terminal_color_*, @captures) is themed by the standard groups; the file tree
 -- and fuzzy picker are themed via the NvimTree*/Telescope* integrations.
-function M.get()
+function M.get(C)
 	return {
 		-- which-key popup
 		WhichKey = { link = "NormalFloat" }, -- the key chord

@@ -2,7 +2,7 @@ local M = {}
 
 M.url = "https://github.com/neoclide/coc.nvim"
 
-function M.get()
+function M.get(C)
 	return {
 		-- These groups are for the coc.nvim, see ":h coc-highlights"
 		-- Custom popup menu since coc v0.0.82

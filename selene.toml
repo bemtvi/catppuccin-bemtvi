@@ -6,3 +6,6 @@ exclude = [".panvimdoc/**"]
 bad_string_escape = "allow"
 # Mixed tables are idiomatic in btv specs (`{ "owner/repo", config = fn }`).
 mixed_table = "allow"
+# stylua.toml sets `collapse_simple_statement = "Always"`, which folds short
+# `if x then y end` blocks onto one line on purpose. selene would flag every one.
+multiple_statements = "allow"
