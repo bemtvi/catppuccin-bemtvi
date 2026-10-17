@@ -68,6 +68,16 @@ btv.test.describe("catppuccin flavours", function()
 		expect(btv.g.colors_name).to_equal "catppuccin-frappe"
 	end)
 
+	btv.test.it("changing `background` switches to the mapped flavour", function(t)
+		t:cmd "colorscheme catppuccin-mocha"
+		t:cmd "set background=light"
+		expect(btv.g.colors_name).to_equal "catppuccin-latte"
+		expect(hl("Normal").bg).to_equal(rgb(PALETTES.latte.base))
+		btv.o.background = "dark"
+		t:wait_for(function() return btv.g.colors_name == "catppuccin-mocha" end)
+		expect(hl("Normal").bg).to_equal(rgb(PALETTES.mocha.base))
+	end)
+
 	btv.test.it("a fixed `flavour` wins over `background`", function(t)
 		setup { flavour = "macchiato" }
 		btv.o.background = "light"

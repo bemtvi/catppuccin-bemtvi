@@ -90,8 +90,10 @@ COLORSCHEMES                            *catppuccin-bemtvi-usage-colorschemes*
 The plain `catppuccin` picks a flavour when it loads: the `flavour` option if
 you set one, otherwise the flavour that `background` maps the current
 `btv.o.background` to (`dark` gives `mocha`, `light` gives `latte` by default).
-The choice is made at load time; changing `background` afterwards does not
-reload the theme.
+Changing `background` later (`:set background=light`, or a write to
+`btv.o.background`) makes bemtvi reload the loaded theme, as vim does, and the
+reload switches to the flavour `background` maps the new value to: `mocha`
+becomes `latte` and back again.
 
 >lua
     btv.o.background = "light"
